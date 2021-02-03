@@ -1,0 +1,34 @@
+* {
+  box-sizing: border-box;
+}
+.main {
+  background-color: #96c0c9;
+  padding: 5%;
+  margin: 1%;
+}
+
+.main::after {
+  content:"";
+  clear: both;
+  display: table;
+}
+
+.chatMain {
+  background-color: #b4c8cc;
+  padding: 3%;
+  margin-left: 5%;
+  width: 75%;
+  float: left;
+}
+
+.participantsMain {
+  background-color: #99ccff;
+  padding: 3%;
+  margin-left: 2.5%;
+  width: 15%;
+  float: left;
+}
+
+.newMsg {
+  width: 100%;
+}

@@ -1,0 +1,32 @@
+<div *ngIf="!name" class="main">
+  <h2> Please enter a name:</h2>
+  <label>
+    Your name:
+    <input type="text" [formControl]="newName">
+  </label>
+  <button (click)="registerName()">Choose name</button>
+</div>
+
+
+<!-- when name entered -->
+  <div *ngIf="name" class="main">
+    <h1 >Chatting as {{name}}</h1>
+    <div class="chatMain">
+      <h4 *ngFor="let message of messages">
+        {{message}}
+      </h4>
+    </div>
+    <div class="participantsMain">
+      <ul>
+        <li *ngFor="let client of participants">{{client}}</li>
+      </ul>
+    </div>
+    <div class="newMsg">
+      <label>
+        Message:
+        <input type="text" [formControl]="message">
+      </label>
+
+      <button (click)="sendMessage()">Send Message</button>
+    </div>
+  </div>
