@@ -19,6 +19,8 @@
   margin-left: 5%;
   width: 75%;
   float: left;
+  max-height: 450px;
+  overflow-y: scroll;
 }
 
 .participantsMain {
@@ -31,4 +33,6 @@
 
 .newMsg {
   width: 100%;
+  padding: 2% 15%;
+  background-color: #96c0c9;
 }

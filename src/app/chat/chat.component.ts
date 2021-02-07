@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ChatService} from './shared/chat.service';
-import {Subscription} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
+import {take, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat',
@@ -14,16 +15,31 @@ export class ChatComponent implements OnInit {
   newName = new FormControl('');
   messages: string[] = [];
   participants: string[] = [];
-  sub: Subscription = new Subscription();
-  sub2: Subscription = new Subscription();
+  unsubscriber = new Subject();
   constructor(private chatService: ChatService) { }
 
   ngOnInit(): void {
-    this.sub = this.chatService.listenForMessages().subscribe(message => {
+    this.chatService.listenForMessages()
+      .pipe(
+        takeUntil(this.unsubscriber)
+      )
+      .subscribe(message => {
       console.log('heloooooo');
       this.messages.push(message);
     });
-    this.sub2 = this.chatService.listenForParticipants().subscribe(clients => {
+    this.chatService.getAllMessages()
+      .pipe(
+        take(1)
+      )
+      .subscribe(messages => {
+        console.log('Got all of them');
+        this.messages = messages;
+      });
+    this.chatService.listenForParticipants()
+      .pipe(
+        takeUntil(this.unsubscriber)
+      )
+      .subscribe(clients => {
       console.log('I hear you');
       this.participants = clients;
     });
@@ -31,12 +47,14 @@ export class ChatComponent implements OnInit {
 
   ngOnDestroy(): void {
     console.log('Destroyed');
-    if(this.sub) {
+    this.unsubscriber.next();
+    this.unsubscriber.complete();
+    /*if(this.sub) {
       this.sub.unsubscribe();
     }
     if(this.sub2) {
       this.sub2.unsubscribe();
-    }
+    }*/
   }
 
   sendMessage(): void {

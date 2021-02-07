@@ -21,12 +21,14 @@
         <li *ngFor="let client of participants">{{client}}</li>
       </ul>
     </div>
-    <div class="newMsg">
+  </div>
+    <div *ngIf="name" class="newMsg">
       <label>
         Message:
         <input type="text" [formControl]="message">
       </label>
 
+
       <button (click)="sendMessage()">Send Message</button>
     </div>
-  </div>
+
