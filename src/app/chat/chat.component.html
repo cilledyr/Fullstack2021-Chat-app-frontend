@@ -12,13 +12,13 @@
   <div *ngIf="name" class="main">
     <h1 >Chatting as {{name}}</h1>
     <div class="chatMain">
-      <h4 *ngFor="let message of messages">
-        {{message}}
+      <h4 *ngFor="let message of allMessages">
+        {{message.chatUser.nickName}} : {{message.message}}
       </h4>
     </div>
     <div class="participantsMain">
       <ul>
-        <li *ngFor="let client of participants">{{client}}</li>
+        <li *ngFor="let client of participants">{{client.nickName}}</li>
       </ul>
     </div>
   </div>

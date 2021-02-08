@@ -3,6 +3,8 @@ import {FormControl} from '@angular/forms';
 import {ChatService} from './shared/chat.service';
 import {Subject, Subscription} from 'rxjs';
 import {take, takeUntil} from 'rxjs/operators';
+import {ChatMessage} from './shared/chat-message.model';
+import {ChatUser} from './shared/chat-user.model';
 
 @Component({
   selector: 'app-chat',
@@ -13,8 +15,8 @@ export class ChatComponent implements OnInit {
   name: string | undefined;
   message = new FormControl('');
   newName = new FormControl('');
-  messages: string[] = [];
-  participants: string[] = [];
+  allMessages: ChatMessage[] = [];
+  participants: ChatUser[] = [];
   unsubscriber = new Subject();
   constructor(private chatService: ChatService) { }
 
@@ -25,7 +27,7 @@ export class ChatComponent implements OnInit {
       )
       .subscribe(message => {
       console.log('heloooooo');
-      this.messages.push(message);
+      this.allMessages.push(message);
     });
     this.chatService.getAllMessages()
       .pipe(
@@ -33,22 +35,24 @@ export class ChatComponent implements OnInit {
       )
       .subscribe(messages => {
         console.log('Got all of them');
-        this.messages = messages;
+        this.allMessages = messages;
       });
     this.chatService.listenForParticipants()
       .pipe(
         takeUntil(this.unsubscriber)
       )
       .subscribe(clients => {
-      console.log('I hear you');
+      console.log('I see everyone');
       this.participants = clients;
     });
+    this.chatService.connect();
   }
 
   ngOnDestroy(): void {
     console.log('Destroyed');
     this.unsubscriber.next();
     this.unsubscriber.complete();
+    this.chatService.disconnect();
     /*if(this.sub) {
       this.sub.unsubscribe();
     }
@@ -59,7 +63,7 @@ export class ChatComponent implements OnInit {
 
   sendMessage(): void {
     console.log(this.message.value);
-    this.chatService.sendMessage(this.name + ': ' + this.message.value);
+    this.chatService.sendMessage(this.message.value);
   }
 
   registerName(): void {
