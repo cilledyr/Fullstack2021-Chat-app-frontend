@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ChatService} from './shared/chat.service';
-import {Subject, Subscription} from 'rxjs';
-import {take, takeUntil} from 'rxjs/operators';
+import {Observable, Subject, Subscription} from 'rxjs';
+import {debounce, debounceTime, take, takeUntil} from 'rxjs/operators';
 import {ChatMessage} from './shared/chat-message.model';
 import {ChatUser} from './shared/chat-user.model';
 
@@ -12,12 +12,14 @@ import {ChatUser} from './shared/chat-user.model';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
-  name: string | undefined;
-  message = new FormControl('');
-  newName = new FormControl('');
+  chatClient: ChatUser | undefined;
+  newMessageFC = new FormControl('');
+  newNameFC = new FormControl('');
   allMessages: ChatMessage[] = [];
   participants: ChatUser[] = [];
+  participantsTyping: ChatUser[] = [];
   unsubscriber = new Subject();
+  error$: Observable<string> | undefined;
   constructor(private chatService: ChatService) { }
 
   ngOnInit(): void {
@@ -28,15 +30,8 @@ export class ChatComponent implements OnInit {
       .subscribe(message => {
       console.log('heloooooo');
       this.allMessages.push(message);
+      this.chatService.allMessagesInt = this.allMessages.length;
     });
-    this.chatService.getAllMessages()
-      .pipe(
-        take(1)
-      )
-      .subscribe(messages => {
-        console.log('Got all of them');
-        this.allMessages = messages;
-      });
     this.chatService.listenForParticipants()
       .pipe(
         takeUntil(this.unsubscriber)
@@ -45,34 +40,59 @@ export class ChatComponent implements OnInit {
       console.log('I see everyone');
       this.participants = clients;
     });
-    this.chatService.connect();
+    this.chatService.listenForClientTyping()
+      .pipe(
+        takeUntil(this.unsubscriber)
+      )
+      .subscribe(client => {
+        if (client.typing && !this.participantsTyping.find(c => c.id === client.id)) {
+         this.participantsTyping.push(client);
+        }
+        else {
+          this.participantsTyping = this.participantsTyping.filter(c => c.id !== client.id);
+        }
+      });
+    this.chatService.listenForWelcome().pipe(takeUntil(this.unsubscriber)).subscribe(welcome => {
+        this.allMessages = welcome.allMessages;
+        this.participants = welcome.allUsers;
+        this.chatClient = this.chatService.chatClient = welcome.thisClient;
+        this.chatService.allMessagesInt = welcome.allMessages.length;
+      }
+    );
+    this.error$ = this.chatService.listenForErrors();
+    this.newMessageFC.valueChanges
+      .pipe(
+        takeUntil(this.unsubscriber),
+        debounceTime(500)
+      )
+      .subscribe(value => {
+        this.chatService.sendTyping(value.length > 0);
+      });
+    if (this.chatService.chatClient)
+    {
+      this.chatService.sendName(this.chatService.chatClient.nickName);
+    }
   }
 
   ngOnDestroy(): void {
     console.log('Destroyed');
+    this.chatService.allMessagesInt = this.allMessages.length;
     this.unsubscriber.next();
     this.unsubscriber.complete();
-    this.chatService.disconnect();
-    /*if(this.sub) {
-      this.sub.unsubscribe();
-    }
-    if(this.sub2) {
-      this.sub2.unsubscribe();
-    }*/
   }
 
   sendMessage(): void {
-    console.log(this.message.value);
-    this.chatService.sendMessage(this.message.value);
+    console.log(this.newMessageFC.value);
+    this.chatService.sendMessage(this.newMessageFC.value);
+    this.newMessageFC.setValue('');
   }
 
   registerName(): void {
-    this.name = this.newName.value;
-    if (this.name)
+    if (this.newNameFC.value)
     {
-      this.chatService.sendName(this.name);
+      this.chatService.sendName(this.newNameFC.value);
     }
-    console.log(this.newName.value + ' registered');
+    console.log(this.newNameFC.value + ' registered');
   }
 
 }

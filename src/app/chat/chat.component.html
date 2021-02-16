@@ -1,31 +1,42 @@
-<div *ngIf="!name" class="main">
+<div *ngIf="error$ | async as error">
+  <h2>{{error}}</h2>
+</div>
+<div *ngIf="!chatClient" class="main">
   <h2> Please enter a name:</h2>
   <label>
     Your name:
-    <input type="text" [formControl]="newName">
+    <input type="text" [formControl]="newNameFC">
   </label>
   <button (click)="registerName()">Choose name</button>
 </div>
 
 
 <!-- when name entered -->
-  <div *ngIf="name" class="main">
-    <h1 >Chatting as {{name}}</h1>
+  <div *ngIf="chatClient" class="main">
+    <h1 >Chatting as {{chatClient.nickName}}</h1>
     <div class="chatMain">
       <h4 *ngFor="let message of allMessages">
         {{message.chatUser.nickName}} : {{message.message}}
       </h4>
+      <div *ngIf="participantsTyping.length > 0 && chatClient" class="typing">
+        <h2>Users typing: <span *ngFor="let client of participantsTyping; let i = index">
+      {{client.nickName}}
+          <span *ngIf="participantsTyping.length -1 > i">,</span>
+    </span> </h2>
+      </div>
     </div>
+
+
     <div class="participantsMain">
       <ul>
         <li *ngFor="let client of participants">{{client.nickName}}</li>
       </ul>
     </div>
   </div>
-    <div *ngIf="name" class="newMsg">
+    <div *ngIf="chatClient" class="newMsg">
       <label>
         Message:
-        <input type="text" [formControl]="message">
+        <input type="text" [formControl]="newMessageFC">
       </label>
 
 
