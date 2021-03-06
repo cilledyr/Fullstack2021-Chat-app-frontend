@@ -1,6 +1,8 @@
-<ul>
-  <li><a routerLink="/">Home</a></li>
-  <li><a routerLink="/chats">Chat</a></li>
-  <li style="float:right" *ngIf="chatClient">Users online: {{participantsInt}} </li>
-  <li style="float:right" *ngIf="chatClient && unreadmsg > 0">Unread messages: {{unreadmsg}}</li>
-</ul>
+  <div class="row nav-component ">
+    <ul>
+      <li><a routerLink="/">Home</a></li>
+      <li><a routerLink="/chats">Chat</a></li>
+      <li class="float-right" *ngIf="chatClient">Users online: {{participantsInt}} </li>
+      <li class="float-right" *ngIf="chatClient && unreadmsg > 0">Unread messages: {{unreadmsg}}</li>
+    </ul>
+  </div>

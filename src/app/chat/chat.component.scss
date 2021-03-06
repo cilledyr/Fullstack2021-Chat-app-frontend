@@ -1,24 +1,19 @@
-* {
-  box-sizing: border-box;
-}
+
 .main {
   background-color: #96c0c9;
-  padding: 5%;
-  margin: 1%;
 }
 
-.main::after {
-  content:"";
-  clear: both;
-  display: table;
+.mainChat {
+  padding-top: 10% !important;
+  overflow: hidden !important;
 }
 
+/*
 .chatMain {
   background-color: #b4c8cc;
   padding: 3%;
   margin-left: 5%;
   width: 75%;
-  float: left;
   max-height: 450px;
   overflow-y: scroll;
 }
@@ -28,16 +23,27 @@
   padding: 3%;
   margin-left: 2.5%;
   width: 15%;
-  float: left;
 }
 
 .newMsg {
-  width: 100%;
+  width: 80%;
   padding: 2% 15%;
   background-color: #96c0c9;
 }
 .typing {
   width: 100%;
-  color: orange;
   font-size: 0.8em;
 }
+
+.self {
+  text-align: right;
+}
+
+.other {
+  text-align: left;
+}
+
+.no-list-style {
+  list-style: none;
+}
+*/
