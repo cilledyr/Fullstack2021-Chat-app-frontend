@@ -19,7 +19,7 @@ export class ChatComponent implements OnInit {
   participants: ChatUser[] = [];
   participantsTyping: ChatUser[] = [];
   unsubscriber = new Subject();
-  error$: Observable<string> | undefined;
+  nameError$: Observable<string> | undefined;
   constructor(private chatService: ChatService) { }
 
   ngOnInit(): void {
@@ -59,7 +59,7 @@ export class ChatComponent implements OnInit {
         this.chatService.allMessagesInt = welcome.allMessages.length;
       }
     );
-    this.error$ = this.chatService.listenForErrors();
+    this.nameError$ = this.chatService.listenForErrors();
     this.newMessageFC.valueChanges
       .pipe(
         takeUntil(this.unsubscriber),

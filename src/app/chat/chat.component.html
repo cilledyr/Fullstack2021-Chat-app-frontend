@@ -1,45 +1,72 @@
-<div *ngIf="error$ | async as error">
-  <h2>{{error}}</h2>
+<div *ngIf="!chatClient">
+  <div *ngIf="nameError$ | async as error" class="alert alert-danger">
+    {{error}}
+  </div>
 </div>
-<div *ngIf="!chatClient" class="main">
-  <h2> Please enter a name:</h2>
-  <label>
-    Your name:
-    <input type="text" [formControl]="newNameFC">
-  </label>
-  <button (click)="registerName()">Choose name</button>
+<div *ngIf="!chatClient" class="row align-items-center justify-content-center vh-100">
+  <div class="card main">
+    <h3 class="card-title">Welcome to my chat!</h3>
+    <div class="card-body">
+      <form>
+        <div class="form-group">
+          <label for="nickNameFc"><i class="bi bi-person-circle"></i> Please enter a username:</label>
+          <input type="text" [formControl]="newNameFC" class="form-control" placeholder="Username" id="nickNameFc">
+        </div>
+        <div class="row justify-content-end">
+          <button type="button" (click)="registerName()" class="btn btn-light btn-outline-dark">Choose name</button>
+        </div>
+      </form>
+    </div>
+    </div>
 </div>
 
 
 <!-- when name entered -->
-  <div *ngIf="chatClient" class="main">
-    <h1 >Chatting as {{chatClient.nickName}}</h1>
-    <div class="chatMain">
-      <h4 *ngFor="let message of allMessages">
-        {{message.chatUser.nickName}} : {{message.message}}
-      </h4>
-      <div *ngIf="participantsTyping.length > 0 && chatClient" class="typing">
-        <h2>Users typing: <span *ngFor="let client of participantsTyping; let i = index">
-      {{client.nickName}}
-          <span *ngIf="participantsTyping.length -1 > i">,</span>
-    </span> </h2>
+  <div *ngIf="chatClient" class="main mainChat row vh-100">
+
+      <div class="col-8 ">
+        <div class="card fh-100">
+          <div class="card-header">
+            <h5><i class="bi bi-person-circle"></i> Chatting as {{chatClient.nickName}}</h5>
+          </div>
+          <div class="card-body">
+            <h4 *ngFor="let message of allMessages">
+
+              <span *ngIf="message.chatUser.id === chatClient.id" class="float-right">{{message.message}}  <i class="bi bi-person-circle"></i></span>
+              <span *ngIf="message.chatUser.id != chatClient.id"><i class="bi bi-person"></i>  {{message.chatUser.nickName}} : {{message.message}}</span>
+            </h4>
+            </div>
+        </div>
+        <div class="card-footer">
+          <div style="height:40px">
+            <div *ngIf="participantsTyping.length > 0 && chatClient" >
+              <h5 class="text-muted"><i class="bi bi-person-lines-fill"></i> typing: <span *ngFor="let client of participantsTyping; let i = index">
+            {{client.nickName}}
+                <span *ngIf="participantsTyping.length -1 > i">,</span>
+            </span> </h5>
+            </div>
+          </div>
+          <div *ngIf="chatClient" class="input-group">
+            <span class="input-group-text">
+              Message:
+            </span>
+            <input type="text" [formControl]="newMessageFC" class="form-control" placeholder="Write message...">
+            <button type="button" (click)="sendMessage()" class="btn btn-light btn-outline-dark">Send Message</button>
+          </div>
+        </div>
+      </div>
+    <div class="col-4">
+      <div class="card">
+        <div class="card-header"><h5>Participants in the chat:</h5></div>
+        <div class="card-body">
+          <ul class="no-list-style list-group list-group-flush">
+            <li class="list-group-item" *ngFor="let client of participants">
+              <span *ngIf="client.id === chatClient.id" class="disabled">{{client.nickName}}</span>
+              <span *ngIf="client.id != chatClient.id">{{client.nickName}}</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-
-
-    <div class="participantsMain">
-      <ul>
-        <li *ngFor="let client of participants">{{client.nickName}}</li>
-      </ul>
-    </div>
   </div>
-    <div *ngIf="chatClient" class="newMsg">
-      <label>
-        Message:
-        <input type="text" [formControl]="newMessageFC">
-      </label>
-
-
-      <button (click)="sendMessage()">Send Message</button>
-    </div>
 
