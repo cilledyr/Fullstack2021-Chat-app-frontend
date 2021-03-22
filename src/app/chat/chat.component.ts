@@ -20,9 +20,18 @@ export class ChatComponent implements OnInit {
   participantsTyping: ChatUser[] = [];
   unsubscriber = new Subject();
   nameError$: Observable<string> | undefined;
+  socketId: string | undefined;
   constructor(private chatService: ChatService) { }
 
   ngOnInit(): void {
+    this.chatService.listenForConnect()
+      .pipe(
+        takeUntil(this.unsubscriber)
+      )
+      .subscribe((id) => {
+        this.socketId = id;
+        console.log('Connect ', id);
+      });
     this.chatService.listenForMessages()
       .pipe(
         takeUntil(this.unsubscriber)
@@ -72,6 +81,16 @@ export class ChatComponent implements OnInit {
     {
       this.chatService.sendName(this.chatService.chatClient.nickName);
     }
+
+
+    this.chatService.listenForDisconnect()
+      .pipe(
+        takeUntil(this.unsubscriber)
+      )
+      .subscribe((id) => {
+        this.socketId = id;
+        console.log('Disconnect ', id);
+      });
   }
 
   ngOnDestroy(): void {
