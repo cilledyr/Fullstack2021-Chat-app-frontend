@@ -1,0 +1,47 @@
+<div class ="row align-items-center justify-content-center vh-100 ">
+  <div class="card main col-4">
+    <h3 class="card-title text-white-50">Exchange stocks</h3>
+    <div class="card-body">
+      <div class="background-light">
+        <h5>Stocks</h5>
+        <table *ngIf="allStocks">
+          <tr>
+            <th class="col-6">Stock name</th>
+            <th class="col-6">Stock rate</th>
+          </tr>
+          <tr *ngFor="let stock of allStocks">
+            <th><button type="button" (click)="selectStock(stock.id)" class="btn btn-light btn-outline-dark">{{stock.name}}</button></th>
+            <th>{{stock.rate}}</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="stockSelected" class="card main col-8">
+    <h3 class="card-title text-white-50">Your selected stock</h3>
+    <div class="card-body">
+      <div class="background-light">
+        <h5>{{stockSelected.name}}</h5>
+        <h6>{{stockSelected.description}}</h6>
+        <div class="clearfix">
+          <span class="input-group-text col-4 float-left">
+              New rate:
+            </span>
+          <input type="text" [formControl]="newRateFC" class="form-control col-8 float-left" placeholder="{{stockSelected.rate}}">
+        </div>
+        <table>
+          <tr>
+            <th class="col-6">Date</th>
+            <th class="col-6">Rate</th>
+          </tr>
+          <tr *ngFor="let stockchange of stockSelected.changeRates">
+            <th>{{stockchange.changetime}}</th>
+            <th>{{stockchange.newValue}}</th>
+          </tr>
+        </table>
+        <button type="button" (click)="changeRate()" class="btn btn-light btn-outline-dark">Update</button>
+        <button type="button" (click)="deleteStock()" class="btn btn-light btn-outline-dark">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,7 @@ import {ChatMessage} from './chat-message.model';
 import {ChatUser} from './chat-user.model';
 import {WelcomeDto} from './welcome.dto';
 import {map} from 'rxjs/operators';
+import {ChatSocket} from '../../app.module';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class ChatService {
   allMessagesInt = 0;
 
 
-  constructor(private socket: Socket) { }
+  constructor(private socket: ChatSocket) { }
 
   sendMessage(msg: string): void {
     this.socket.emit('message', msg);

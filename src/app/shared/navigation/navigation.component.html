@@ -1,6 +1,7 @@
   <div class="row col-12 nav-component">
     <ul>
       <li><a routerLink="/">Home</a></li>
+      <li><a routerLink="/stocks">Stocks</a></li>
       <li><a routerLink="/chats">Chat</a></li>
       <li *ngIf="chatClient">Users online: {{participantsInt}} </li>
       <li *ngIf="chatClient && unreadmsg > 0">Unread messages: {{unreadmsg}}</li>

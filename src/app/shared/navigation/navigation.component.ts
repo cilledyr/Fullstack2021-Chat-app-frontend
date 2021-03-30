@@ -11,7 +11,9 @@ import {Subject} from 'rxjs';
 })
 export class NavigationComponent implements OnInit {
 
-  constructor(private chatService: ChatService) { }
+  constructor(
+    //private chatService: ChatService
+  ) { }
 
   chatClient: ChatUser | undefined;
   participantsInt = 0;
@@ -22,7 +24,7 @@ export class NavigationComponent implements OnInit {
   unreadmsg = 0;
 
   ngOnInit(): void {
-    this.chatService.listenForWelcome().pipe(takeUntil(this.unsubscriber)).subscribe(welcome => {
+    /*this.chatService.listenForWelcome().pipe(takeUntil(this.unsubscriber)).subscribe(welcome => {
         this.allMessagesInt = welcome.allMessages.length;
         this.participantsInt = welcome.allUsers.length;
         this.chatClient = welcome.thisClient;
@@ -45,7 +47,7 @@ export class NavigationComponent implements OnInit {
       });
 
     this.startTimer();
-  }
+  */}
 
   ngOnDestroy(): void {
     this.unsubscriber.next();
@@ -53,9 +55,9 @@ export class NavigationComponent implements OnInit {
   }
 
   startTimer(): void {
-    this.interval = setInterval(() => {
+    /*.interval = setInterval(() => {
       this.allMessagesInChatInt = this.chatService.allMessagesInt;
       this.unreadmsg = this.allMessagesInt - this.allMessagesInChatInt;
-    },1000);
+    },1000);*/
   }
 }
