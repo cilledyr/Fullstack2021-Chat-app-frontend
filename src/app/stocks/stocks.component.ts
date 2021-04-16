@@ -4,6 +4,7 @@ import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {Stock} from './shared/stocks.model';
 import {FormControl} from '@angular/forms';
+import {StorageService} from '../shared/storage.service';
 
 @Component({
   selector: 'app-stocks',
@@ -17,9 +18,14 @@ export class StocksComponent implements OnInit {
   stockSelected: Stock |undefined;
   newRateFC = new FormControl('');
 
-  constructor(private stocksService: StocksService) { }
+  constructor(private stocksService: StocksService, private storageService: StorageService) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void{
+    const stocksStorage =  this.storageService.loadStocks();
+    if (stocksStorage)
+    {
+      this.allStocks = stocksStorage;
+    }
     this.stocksService.listenForStocks()
       .pipe(
         takeUntil(this.unsubscriber)
@@ -27,14 +33,15 @@ export class StocksComponent implements OnInit {
       .subscribe(stocks => {
         console.log('heloooooo');
         this.allStocks = stocks;
-        this.stockSelected = this.allStocks[2];
+        this.storageService.saveStocks(stocks);
+        this.stockSelected = this.allStocks[0];
       });
 
   }
 
   changeRate(): void {
-    const theRate = parseFloat(this.newRateFC.value);
-    if (this.stockSelected !== undefined && theRate)
+    const theRate = parseInt(this.newRateFC.value);
+    if (this.stockSelected !== undefined && theRate !== undefined)
     {
       console.log(this.newRateFC.value);
       this.stocksService.changeStock(theRate, this.stockSelected);

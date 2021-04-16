@@ -5,6 +5,9 @@ import {Observable, Subject, Subscription} from 'rxjs';
 import {debounce, debounceTime, take, takeUntil} from 'rxjs/operators';
 import {ChatMessage} from './shared/chat-message.model';
 import {ChatUser} from './shared/chat-user.model';
+import {JoinChatDto} from './shared/join-chat.dto';
+import {ChatSocket} from '../app.module';
+import {StorageService} from '../shared/storage.service';
 
 @Component({
   selector: 'app-chat',
@@ -21,7 +24,7 @@ export class ChatComponent implements OnInit {
   unsubscriber = new Subject();
   nameError$: Observable<string> | undefined;
   socketId: string | undefined;
-  constructor(private chatService: ChatService) { }
+  constructor(private chatService: ChatService, private storageService: StorageService) { }
 
   ngOnInit(): void {
     this.chatService.listenForConnect()
@@ -64,7 +67,8 @@ export class ChatComponent implements OnInit {
     this.chatService.listenForWelcome().pipe(takeUntil(this.unsubscriber)).subscribe(welcome => {
         this.allMessages = welcome.allMessages;
         this.participants = welcome.allUsers;
-        this.chatClient = this.chatService.chatClient = welcome.thisClient;
+        this.storageService.saveChatUser(welcome.thisClient);
+        this.chatClient = welcome.thisClient;
         this.chatService.allMessagesInt = welcome.allMessages.length;
       }
     );
@@ -77,9 +81,10 @@ export class ChatComponent implements OnInit {
       .subscribe(value => {
         this.chatService.sendTyping(value.length > 0);
       });
-    if (this.chatService.chatClient)
+    const oldUser = this.storageService.loadChatUser();
+    if (oldUser)
     {
-      this.chatService.sendName(this.chatService.chatClient.nickName);
+      this.chatService.joinChat({id: oldUser.id, nickName: oldUser.nickName});
     }
 
 
@@ -109,7 +114,9 @@ export class ChatComponent implements OnInit {
   registerName(): void {
     if (this.newNameFC.value)
     {
-      this.chatService.sendName(this.newNameFC.value);
+      const dto: JoinChatDto = {nickName: this.newNameFC.value};
+      console.log(JSON.stringify(dto));
+      this.chatService.joinChat(dto);
     }
     console.log(this.newNameFC.value + ' registered');
   }

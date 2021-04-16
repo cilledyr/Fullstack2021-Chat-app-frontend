@@ -1,5 +1,8 @@
+import {Stock} from './stocks.model';
+
 export interface StockChange {
-  stockId: number;
-  changetime: Date;
+  id: number;
+  stock: Stock;
+  changeTime: Date;
   newValue: number;
 }

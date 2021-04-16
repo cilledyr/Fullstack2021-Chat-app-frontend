@@ -15,7 +15,7 @@ export class StocksService {
   }
 
   changeStock(value: number, stock: Stock): void {
-    stock.changeRates.push({stockId: stock.id, changetime: new Date(), newValue: value});
+    stock.changeRates.push({id: -1, stock: stock, changeTime: new Date(), newValue: value});
     stock.rate = value;
     this.socket.emit('changedStock', stock);
   }

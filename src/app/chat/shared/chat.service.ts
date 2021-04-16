@@ -6,13 +6,15 @@ import {ChatUser} from './chat-user.model';
 import {WelcomeDto} from './welcome.dto';
 import {map} from 'rxjs/operators';
 import {ChatSocket} from '../../app.module';
+import {JoinChatDto} from './join-chat.dto';
+import {StorageService} from '../../shared/storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
 
-  chatClient: ChatUser | undefined;
+  //chatClient: ChatUser | undefined;
   allMessagesInt = 0;
 
 
@@ -22,8 +24,8 @@ export class ChatService {
     this.socket.emit('message', msg);
   }
 
-  sendName(name: string): void {
-    this.socket.emit('name', name);
+  joinChat(dto: JoinChatDto): void {
+    this.socket.emit('joinChat', dto);
   }
 
   listenForMessages(): Observable<ChatMessage> {

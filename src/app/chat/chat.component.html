@@ -3,7 +3,7 @@
   <div class="card main">
     <h3 class="card-title">Welcome to my chat!</h3>
     <div class="card-body">
-      <div *ngIf="socketId" style="color: green">{{socketId}}</div>
+      <div *ngIf="socketId" style="color: green">Online</div>
       <div *ngIf="!socketId" style="color: darkred">Offline.</div>
       <div *ngIf="nameError$ | async as error" class="alert alert-danger">
         {{error}}
